@@ -3,14 +3,38 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:todo_list/screens/home.dart';
 import 'package:todo_list/services/task_storage.dart';
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  TaskStorage.init();
-  runApp(const MyApp());
+  await AppStorage.init();
+  final bool isDark = await AppStorage.getTheme();
+  runApp(MyApp(isDark: isDark));
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class MyApp extends StatefulWidget {
+  const MyApp({super.key, required this.isDark});
+  final bool isDark;
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  late ThemeMode themeMode;
+
+  @override
+  void initState() {
+    super.initState();
+    themeMode = widget.isDark ? ThemeMode.dark : ThemeMode.light;
+  }
+
+  void toggleTheme() {
+    setState(() {
+      themeMode = themeMode == ThemeMode.light
+          ? ThemeMode.dark
+          : ThemeMode.light;
+    });
+
+    AppStorage.setTheme(themeMode == ThemeMode.dark);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +47,10 @@ class MyApp extends StatelessWidget {
         return MaterialApp(
           debugShowCheckedModeBanner: false,
           title: 'Todo List',
-          home: const HomeScreen(),
+          themeMode: themeMode,
+          darkTheme: ThemeData.dark(),
+          theme: ThemeData.light(),
+          home: HomeScreen(onToggleTheme: toggleTheme),
         );
       },
     );

@@ -8,7 +8,8 @@ import '../models/task_model.dart';
 import '../services/task_storage.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+  final VoidCallback onToggleTheme;
+  const HomeScreen({super.key, required this.onToggleTheme});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -27,9 +28,9 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<void> _loadTasks() async {
-    await TaskStorage.init(); // Initialize storage
+    await AppStorage.init(); // Initialize storage
     setState(() {
-      tasks = TaskStorage.loadTasks(); // Load tasks from storage
+      tasks = AppStorage.loadTasks(); // Load tasks from storage
     });
   }
 
@@ -63,7 +64,7 @@ class _HomeScreenState extends State<HomeScreen> {
       selectedDate = null;
     }); // Update UI
 
-    TaskStorage.saveTasks(tasks); // Store Tasks in Shared Preferences
+    AppStorage.saveTasks(tasks); // Store Tasks in Shared Preferences
   }
 
   void editTask(TaskModel task) {
@@ -100,7 +101,7 @@ class _HomeScreenState extends State<HomeScreen> {
               setState(() {
                 task.name = newNameController.text.trim();
               });
-              TaskStorage.saveTasks(tasks); //save changes in storage
+              AppStorage.saveTasks(tasks); //save changes in storage
               Navigator.pop(context);
             },
             child: const Text('Save'),
@@ -114,7 +115,7 @@ class _HomeScreenState extends State<HomeScreen> {
     setState(() {
       task.isCompleted = !task.isCompleted;
     }); // Update UI
-    TaskStorage.saveTasks(tasks); // save changes in storage
+    AppStorage.saveTasks(tasks); // save changes in storage
   }
 
   // ----------------- UI -----------------
@@ -122,7 +123,18 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('My Tasks'), centerTitle: true),
+      appBar: AppBar(
+        title: const Text('My Tasks'),
+        centerTitle: true,
+        actions: [
+          IconButton(
+            onPressed: () {
+              widget.onToggleTheme();
+            },
+            icon: const Icon(Icons.brightness_4),
+          ),
+        ],
+      ),
       body: Column(
         children: [
           _buildAddTask(),
@@ -239,7 +251,7 @@ class _HomeScreenState extends State<HomeScreen> {
               setState(() {
                 tasks.remove(task);
               });
-              TaskStorage.saveTasks(tasks);
+              AppStorage.saveTasks(tasks);
               Navigator.pop(context);
             },
           ), // helper function to show confirmation dialog before deleting a task

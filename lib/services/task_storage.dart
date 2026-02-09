@@ -3,9 +3,10 @@ import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:todo_list/models/task_model.dart';
 
-class TaskStorage {
+class AppStorage {
   static late SharedPreferences _prefs;
   static const String _tasksKey = 'tasks';
+  static const String _themeKey = 'isDarkMode';
 
   static Future<void> init() async {
     _prefs = await SharedPreferences.getInstance();
@@ -22,5 +23,13 @@ class TaskStorage {
         .toList();
 
     await _prefs.setStringList(_tasksKey, data);
+  }
+
+  static Future<bool> getTheme() async {
+    return _prefs.getBool(_themeKey) ?? false;
+  }
+
+  static Future<void> setTheme(bool isDarkMode) async {
+    await _prefs.setBool(_themeKey, isDarkMode);
   }
 }

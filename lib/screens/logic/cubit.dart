@@ -5,6 +5,7 @@ import 'package:todo_list/constant/enums.dart';
 import 'package:todo_list/models/task_model.dart';
 import 'package:todo_list/screens/logic/states.dart';
 import 'package:todo_list/services/app_datebase.dart';
+import 'package:todo_list/services/task_storage.dart';
 
 class AppCubit extends Cubit<AppState> {
   AppCubit() : super(AppInitialState());
@@ -16,9 +17,20 @@ class AppCubit extends Cubit<AppState> {
   DateTime? selectedDate;
   List<TaskModel> tasks = [];
   TaskFilter selectedFilter = TaskFilter.all;
+  bool isDarkTheme = false;
   set selectedDateChanged(DateTime? date) {
     selectedDate = date;
     emit(SelectedDateChangedState());
+  }
+
+  void initalTheme(value) {
+    isDarkTheme = value;
+  }
+
+  void changeTheme() {
+    isDarkTheme = !isDarkTheme;
+    AppStorage.setTheme(isDarkTheme);
+    emit(ThemeChangedState());
   }
 
   Future<void> getTasks() async {

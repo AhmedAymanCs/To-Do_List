@@ -15,6 +15,8 @@ class SelectedDateChangedState extends AppState {}
 
 class FilterChangedState extends AppState {}
 
+class ThemeChangedState extends AppState {}
+
 class AddTaskSuccessState extends AppState {}
 
 class AddTaskErrorState extends AppState {

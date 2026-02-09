@@ -3,19 +3,19 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:todo_list/screens/home.dart';
 import 'package:todo_list/screens/logic/cubit.dart';
+import 'package:todo_list/screens/logic/states.dart';
 import 'package:todo_list/services/task_storage.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await AppStorage.init();
-  final bool isDark = await AppStorage.getTheme();
-  runApp(MyApp());
+  final bool isDark = await AppStorage.getTheme() ?? false;
+  runApp(MyApp(isDark: isDark));
 }
 
 class MyApp extends StatelessWidget {
-  // late ThemeMode themeMode;
-
-  const MyApp({super.key});
+  final bool isDark;
+  const MyApp({super.key, required this.isDark});
 
   @override
   Widget build(BuildContext context) {
@@ -26,14 +26,23 @@ class MyApp extends StatelessWidget {
       ensureScreenSize: true,
       builder: (context, child) {
         return BlocProvider(
-          create: (context) => AppCubit()..getTasks(),
-          child: MaterialApp(
-            debugShowCheckedModeBanner: false,
-            title: 'Todo List',
-            // themeMode: themeMode,
-            darkTheme: ThemeData.dark(),
-            theme: ThemeData.light(),
-            home: HomeScreen(),
+          create: (context) => AppCubit()
+            ..getTasks()
+            ..initalTheme(isDark),
+          child: BlocConsumer<AppCubit, AppState>(
+            listener: (context, state) {},
+            builder: (context, state) {
+              return MaterialApp(
+                debugShowCheckedModeBanner: false,
+                title: 'Todo List',
+                themeMode: AppCubit.get(context).isDarkTheme
+                    ? ThemeMode.dark
+                    : ThemeMode.light,
+                darkTheme: ThemeData.dark(),
+                theme: ThemeData.light(),
+                home: HomeScreen(),
+              );
+            },
           ),
         );
       },

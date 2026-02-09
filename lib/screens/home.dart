@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:todo_list/screens/helpers.dart';
 import 'package:todo_list/screens/logic/cubit.dart';
 import 'package:todo_list/screens/logic/states.dart';
-import 'package:todo_list/services/app_datebase.dart';
 import 'package:todo_list/widgets/build_add_task.dart';
 import 'package:todo_list/widgets/build_filters.dart';
 import 'package:todo_list/widgets/task_card.dart';
@@ -24,8 +23,8 @@ class HomeScreen extends StatelessWidget {
             centerTitle: true,
             actions: [
               IconButton(
-                onPressed: () async {
-                  // onToggleTheme();
+                onPressed: () {
+                  cubit.changeTheme();
                 },
                 icon: const Icon(Icons.brightness_4),
               ),

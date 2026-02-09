@@ -40,8 +40,21 @@ class HomeScreen extends StatelessWidget {
                 },
                 nameController: cubit.nameController,
                 addTask: () {
+                  if (cubit.nameController.text.trim().isEmpty) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Task name cannot be empty'),
+                      ),
+                    );
+                    return;
+                  }
+                  if (cubit.selectedDate == null) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Please pick a due date')),
+                    );
+                    return;
+                  }
                   cubit.addTask(
-                    context,
                     TaskModel(
                       name: cubit.nameController.text.trim(),
                       dueDate: cubit.selectedDate!,
@@ -58,9 +71,9 @@ class HomeScreen extends StatelessWidget {
               ),
               Expanded(
                 child: ListView.builder(
-                  itemCount: cubit.tasks.length,
+                  itemCount: cubit.filteredTasks.length,
                   itemBuilder: (context, index) {
-                    final task = cubit.tasks[index];
+                    final task = cubit.filteredTasks[index];
                     return TaskCard(
                       editTask: () {
                         editTask(

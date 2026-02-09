@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:todo_list/constant/enums.dart';
 import 'package:todo_list/models/task_model.dart';
@@ -18,6 +17,7 @@ class AppCubit extends Cubit<AppState> {
   List<TaskModel> tasks = [];
   TaskFilter selectedFilter = TaskFilter.all;
   bool isDarkTheme = false;
+
   set selectedDateChanged(DateTime? date) {
     selectedDate = date;
     emit(SelectedDateChangedState());
@@ -48,15 +48,18 @@ class AppCubit extends Cubit<AppState> {
     }
   }
 
-  Future<void> addTask(BuildContext context, TaskModel task) async {
+  List<TaskModel> get filteredTasks {
+    if (selectedFilter == TaskFilter.completed) {
+      return tasks.where((task) => task.isCompleted == 1).toList();
+    } else if (selectedFilter == TaskFilter.pending) {
+      return tasks.where((task) => task.isCompleted == 0).toList();
+    }
+    return tasks;
+  }
+
+  Future<void> addTask(TaskModel task) async {
     emit(TaskLoadingState());
     final db = await LocalDB.datebase;
-    if (nameController.text.trim().isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Task name cannot be empty')),
-      );
-      return;
-    }
     db
         .insert('tasks', task.toMap())
         .then((_) {
@@ -65,7 +68,6 @@ class AppCubit extends Cubit<AppState> {
           nameController.clear();
         })
         .catchError((error) {
-          print("Error adding task: $error");
           emit(AddTaskErrorState(error.toString()));
         });
   }

@@ -9,9 +9,13 @@ List<TaskModel> getFilteredTasks(
 ) {
   switch (selectedFilter) {
     case TaskFilter.completed:
-      return tasks.where((task) => task.isCompleted).toList();
+      return tasks
+          .where((task) => task.isCompleted == 1 ? true : false)
+          .toList();
     case TaskFilter.pending:
-      return tasks.where((task) => !task.isCompleted).toList();
+      return tasks
+          .where((task) => task.isCompleted == 1 ? true : false)
+          .toList();
     default:
       return tasks;
   }
@@ -73,7 +77,7 @@ void editTask({
           onPressed: () => Navigator.pop(context),
           child: const Text('Cancel'),
         ),
-        TextButton(onPressed: () => onSave, child: const Text('Save')),
+        TextButton(onPressed: onSave, child: const Text('Save')),
       ],
     ),
   );

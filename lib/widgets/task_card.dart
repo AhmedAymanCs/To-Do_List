@@ -4,9 +4,9 @@ import 'package:todo_list/models/task_model.dart';
 
 class TaskCard extends StatelessWidget {
   final TaskModel task;
-  final Function(TaskModel) toggleTask;
-  final Function(TaskModel) deleteTask;
-  final Function(TaskModel) editTask;
+  final VoidCallback toggleTask;
+  final VoidCallback deleteTask;
+  final VoidCallback editTask;
 
   const TaskCard({
     super.key,
@@ -14,25 +14,30 @@ class TaskCard extends StatelessWidget {
     required this.toggleTask,
     required this.deleteTask,
     required this.editTask,
+    // required this.editTask,
   });
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () => editTask(task), // Edit task on tap
+      onTap: editTask, // Edit task on tap
       child: Card(
         margin: EdgeInsets.symmetric(horizontal: 12.w, vertical: 4.h),
         child: ListTile(
           leading: Checkbox(
-            value: task.isCompleted,
-            onChanged: (_) => toggleTask(task),
+            value: task.isCompleted == 1 ? true : false,
+            onChanged: (value) {
+              toggleTask();
+            },
           ),
           title: Text(
             task.name,
             style: TextStyle(
               fontSize: 14.sp,
-              decoration: task.isCompleted ? TextDecoration.lineThrough : null,
-              color: task.isCompleted ? Colors.grey : null,
+              decoration: task.isCompleted == 1
+                  ? TextDecoration.lineThrough
+                  : null,
+              color: task.isCompleted == 1 ? Colors.grey : null,
             ),
           ),
           subtitle: Text(
@@ -41,7 +46,7 @@ class TaskCard extends StatelessWidget {
           ),
           trailing: IconButton(
             icon: const Icon(Icons.delete, color: Colors.red),
-            onPressed: () => deleteTask(task),
+            onPressed: () => deleteTask(),
           ),
         ),
       ),

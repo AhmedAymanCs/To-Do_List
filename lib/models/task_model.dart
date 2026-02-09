@@ -1,16 +1,19 @@
 class TaskModel {
+  int? id;
   String name;
-  bool isCompleted;
+  int isCompleted;
   DateTime dueDate;
 
   TaskModel({
+    this.id,
     required this.name,
-    this.isCompleted = false,
+    this.isCompleted = 0,
     required this.dueDate,
   });
 
   factory TaskModel.fromMap(Map<String, dynamic> map) {
     return TaskModel(
+      id: map['id'],
       name: map['name'],
       isCompleted: map['isCompleted'] ?? false,
       dueDate: DateTime.parse(map['dueDate']),

@@ -22,8 +22,8 @@ class AppCubit extends Cubit<AppState> {
     emit(SelectedDateChangedState());
   }
 
-  void initalTheme() async {
-    bool isDarkTheme = await AppStorage.getTheme() ?? false;
+  Future<void> initialTheme() async {
+    isDarkTheme = await AppStorage.getTheme() ?? false;
   }
 
   void changeTheme() {

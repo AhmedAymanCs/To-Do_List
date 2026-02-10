@@ -100,11 +100,13 @@ class AppCubit extends Cubit<AppState> {
   }
 
   Future<void> deleteTask(TaskModel task) async {
+    print("task model :${task.name}  ---- ID: ${task.id}");
     final db = await LocalDB.datebase;
     db
         .delete('tasks', where: 'id = ?', whereArgs: [task.id])
         .then((_) {
-          tasks.removeWhere((t) => t.id == task.id);
+          //tasks.removeWhere((t) => t.id == task.id);
+          getTasks();
           emit(GetTaskSuccessState());
         })
         .catchError((error) {

@@ -3,14 +3,12 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:todo_list/constant/font_size.dart';
 
 class BuildAddTask extends StatefulWidget {
-  TextEditingController nameController;
-  final VoidCallback addTask;
+  final Function(String newName) addTask;
   final VoidCallback changeDate;
   final DateTime? selectedDate;
-  BuildAddTask({
+  const BuildAddTask({
     super.key,
     required this.addTask,
-    required this.nameController,
     required this.changeDate,
     this.selectedDate,
   });
@@ -20,10 +18,11 @@ class BuildAddTask extends StatefulWidget {
 }
 
 class _BuildAddTaskState extends State<BuildAddTask> {
+  late TextEditingController nameController;
   @override
   void initState() {
     super.initState();
-    widget.nameController = TextEditingController();
+    nameController = TextEditingController();
   }
 
   @override
@@ -36,7 +35,7 @@ class _BuildAddTaskState extends State<BuildAddTask> {
             children: [
               Expanded(
                 child: TextField(
-                  controller: widget.nameController,
+                  controller: nameController,
                   style: TextStyle(fontSize: FontSize.medium),
                   decoration: InputDecoration(
                     hintText: 'Enter task...',
@@ -47,7 +46,22 @@ class _BuildAddTaskState extends State<BuildAddTask> {
               ),
               SizedBox(width: 8.w),
               ElevatedButton(
-                onPressed: widget.addTask,
+                onPressed: () {
+                  if (nameController.text.trim().isEmpty) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Task name cannot be empty'),
+                      ),
+                    );
+                  }
+
+                  if (widget.selectedDate == null) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Please pick a due date')),
+                    );
+                  }
+                  widget.addTask(nameController.text);
+                },
                 child: Text('Add', style: TextStyle(fontSize: FontSize.small)),
               ),
             ],
@@ -78,7 +92,7 @@ class _BuildAddTaskState extends State<BuildAddTask> {
 
   @override
   void dispose() {
-    widget.nameController.dispose();
+    nameController.dispose();
     super.dispose();
   }
 }

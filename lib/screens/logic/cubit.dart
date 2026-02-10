@@ -11,7 +11,7 @@ class AppCubit extends Cubit<AppState> {
 
   static AppCubit get(context) => BlocProvider.of(context);
 
-  TextEditingController nameController = TextEditingController();
+  String? taskName;
   DateTime? selectedDate;
   List<TaskModel> tasks = [];
   TaskFilter selectedFilter = TaskFilter.all;
@@ -64,7 +64,6 @@ class AppCubit extends Cubit<AppState> {
         .then((_) {
           tasks.add(task);
           emit(AddTaskSuccessState());
-          nameController.clear();
           selectedDate = null;
         })
         .catchError((error) {

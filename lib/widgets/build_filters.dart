@@ -3,9 +3,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:todo_list/constant/enums.dart';
 
 class BuildFilters extends StatelessWidget {
-  TaskFilter selectedFilter;
+  final TaskFilter selectedFilter;
   final Function(TaskFilter) onSelected;
-  BuildFilters({
+  const BuildFilters({
     super.key,
     required this.selectedFilter,
     required this.onSelected,

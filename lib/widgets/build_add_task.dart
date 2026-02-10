@@ -3,10 +3,10 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:todo_list/constant/font_size.dart';
 
 class BuildAddTask extends StatefulWidget {
-  TextEditingController nameController = TextEditingController();
+  TextEditingController nameController;
   final VoidCallback addTask;
   final VoidCallback changeDate;
-  DateTime? selectedDate;
+  final DateTime? selectedDate;
   BuildAddTask({
     super.key,
     required this.addTask,
@@ -20,6 +20,12 @@ class BuildAddTask extends StatefulWidget {
 }
 
 class _BuildAddTaskState extends State<BuildAddTask> {
+  @override
+  void initState() {
+    super.initState();
+    widget.nameController = TextEditingController();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -72,7 +78,7 @@ class _BuildAddTaskState extends State<BuildAddTask> {
 
   @override
   void dispose() {
-    super.dispose();
     widget.nameController.dispose();
+    super.dispose();
   }
 }

@@ -12,7 +12,6 @@ class AppCubit extends Cubit<AppState> {
   static AppCubit get(context) => BlocProvider.of(context);
 
   TextEditingController nameController = TextEditingController();
-  TextEditingController updatedNameController = TextEditingController();
   DateTime? selectedDate;
   List<TaskModel> tasks = [];
   TaskFilter selectedFilter = TaskFilter.all;
@@ -23,8 +22,8 @@ class AppCubit extends Cubit<AppState> {
     emit(SelectedDateChangedState());
   }
 
-  void initalTheme(value) {
-    isDarkTheme = value;
+  void initalTheme() async {
+    bool isDarkTheme = await AppStorage.getTheme() ?? false;
   }
 
   void changeTheme() {
@@ -66,6 +65,7 @@ class AppCubit extends Cubit<AppState> {
           tasks.add(task);
           emit(AddTaskSuccessState());
           nameController.clear();
+          selectedDate = null;
         })
         .catchError((error) {
           emit(AddTaskErrorState(error.toString()));
@@ -89,16 +89,12 @@ class AppCubit extends Cubit<AppState> {
         )
         .then((_) {
           final index = tasks.indexWhere((t) => t.id == task.id);
-          print(
-            'Toggled task: ${updatedTask.name}, isCompleted: ${updatedTask.isCompleted}',
-          );
           if (index != -1) {
             tasks[index] = updatedTask;
             emit(GetTaskSuccessState());
           }
         })
         .catchError((error) {
-          print("Error toggling task: $error");
           emit(GetTaskErrorState(error.toString()));
         });
   }
@@ -112,16 +108,15 @@ class AppCubit extends Cubit<AppState> {
           emit(GetTaskSuccessState());
         })
         .catchError((error) {
-          print("Error deleting task: $error");
           emit(GetTaskErrorState(error.toString()));
         });
   }
 
-  Future<void> editTask(TaskModel task) async {
+  Future<void> editTask(TaskModel task, String newName) async {
     final db = await LocalDB.datebase;
     final updatedTask = TaskModel(
       id: task.id,
-      name: updatedNameController.text,
+      name: newName,
       dueDate: selectedDate ?? task.dueDate,
       isCompleted: task.isCompleted,
     );
@@ -140,7 +135,6 @@ class AppCubit extends Cubit<AppState> {
           }
         })
         .catchError((error) {
-          print("Error editing task: $error");
           emit(GetTaskErrorState(error.toString()));
         });
   }

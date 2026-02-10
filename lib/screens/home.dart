@@ -5,6 +5,8 @@ import 'package:todo_list/screens/logic/cubit.dart';
 import 'package:todo_list/screens/logic/states.dart';
 import 'package:todo_list/widgets/build_add_task.dart';
 import 'package:todo_list/widgets/build_filters.dart';
+import 'package:todo_list/widgets/delete_task.dart';
+import 'package:todo_list/widgets/edit_task.dart';
 import 'package:todo_list/widgets/task_card.dart';
 import '../models/task_model.dart';
 
@@ -76,15 +78,14 @@ class HomeScreen extends StatelessWidget {
                     final task = cubit.filteredTasks[index];
                     return TaskCard(
                       editTask: () {
-                        editTask(
-                          task: task,
+                        showDialog(
                           context: context,
-                          nameController: cubit.updatedNameController,
-                          onSave: () {
-                            cubit.editTask(task).then((_) {
-                              Navigator.pop(context);
-                            });
-                          },
+                          builder: (context) => EditTaskDialog(
+                            task: task,
+                            onSave: (newName) {
+                              cubit.editTask(task, newName);
+                            },
+                          ),
                         );
                       },
                       task: task,
@@ -92,11 +93,13 @@ class HomeScreen extends StatelessWidget {
                         cubit.toggleTask(task);
                       },
                       deleteTask: () {
-                        deleteTask(
+                        showDialog(
                           context: context,
-                          onDelete: () => cubit.deleteTask(task).then((_) {
-                            Navigator.pop(context);
-                          }),
+                          builder: (context) => DeleteConfirmationDialog(
+                            onDelete: () {
+                              cubit.deleteTask(task);
+                            },
+                          ),
                         );
                       }, // helper function to show confirmation dialog before deleting a task
                     );

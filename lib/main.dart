@@ -9,13 +9,11 @@ import 'package:todo_list/services/task_storage.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await AppStorage.init();
-  final bool isDark = await AppStorage.getTheme() ?? false;
-  runApp(MyApp(isDark: isDark));
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  final bool isDark;
-  const MyApp({super.key, required this.isDark});
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +26,7 @@ class MyApp extends StatelessWidget {
         return BlocProvider(
           create: (context) => AppCubit()
             ..getTasks()
-            ..initalTheme(isDark),
+            ..initalTheme(),
           child: BlocConsumer<AppCubit, AppState>(
             listener: (context, state) {},
             builder: (context, state) {
